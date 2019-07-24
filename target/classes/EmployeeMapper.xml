@@ -2,8 +2,41 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="EmployeeMapper">
-    <select id="selectEmp" resultType="com.cwh.mybatis.beans.Employee">
-    select id,last_name as lastName , gender,email  from table_employee where id = #{id}
-  </select>
+<mapper namespace="com.cwh.mybatis.dao.EmployeeMapper">
+
+    <!--
+    namespace:命名空间；指定为接口的全类名
+    id:唯一标识符；接口的方法名
+    resultType：返回值类型
+    #{id}:从传递的参数中取得id值
+    -->
+    <select id="getEmpById" resultType="com.cwh.mybatis.beans.Employee" >
+      select * from table_employee
+      /*id,last_name as lastName,gender,email*/
+          where id = #{id}
+    </select>
+
+    <!--public void insertEmployee(Employee employee);
+           parameterType:参数类型，可以省略
+           获取自增主键的值：
+                mysql支持自增主键，自增主键值的获取，mybatis也是利用statement.getGeneratedKeys()方法来获取
+                    useGeneratedKeys="true" :使用自增主键获取主键值策略
+                    keyProperty：指定对应的主键属性，也就是mybatis获取到主键值以后，将这个值封装给JavaBean的那个属性
+    -->
+    <insert id="insertEmployee" parameterType="com.cwh.mybatis.beans.Employee"
+    useGeneratedKeys="true" keyProperty="id">
+        insert into table_employee(last_name, gender, email)
+                    values (#{lastName},#{gender},#{email})
+    </insert>
+
+
+    <update id="updateEmployee">
+        update table_employee set last_name=#{lastName}, gender=#{gender},email=#{email}
+    </update>
+
+
+
+    <delete id="deleteEmployeeById">
+        delete from table_employee where id=#{id}
+    </delete>
 </mapper>
