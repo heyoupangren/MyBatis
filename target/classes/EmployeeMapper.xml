@@ -10,6 +10,30 @@
     resultType：返回值类型
     #{id}:从传递的参数中取得id值
     -->
+
+    <!-- public Map<String,Employee> getEmpByLastNameReturnMap(String lastName);-->
+
+    <select id="getEmpByLastNameReturnMap" resultType="com.cwh.mybatis.beans.Employee">
+        select * from table_employee where last_name like #{lastName}
+    </select>
+
+    <!--public Map<String,Object> getEmpByIdReturnMap(Integer id);-->
+    <select id="getEmpByIdReturnMap" resultType="Map">
+        select * from table_employee where id=#{id}
+    </select>
+
+    <!--public List<Employee> getEmpByLastName(String lastName);-->
+    <!--resultType:如果返回的是一个集合，要写集合中元素的类型-->
+    <select id="getEmpByLastName" resultType="com.cwh.mybatis.beans.Employee">
+        select * from table_employee where last_name like #{lastName}
+    </select>
+
+    <!--public Employee getEmpByMap(Map<String,Object> map);-->
+    <select id="getEmpByMap" resultType="com.cwh.mybatis.beans.Employee">
+        select * from ${tableName} where id=${id} and last_name=#{lastName}
+    </select>
+
+    <!--public Employee getEmpById(Integer id);-->
     <select id="getEmpById" resultType="com.cwh.mybatis.beans.Employee" >
       select * from table_employee
       /*id,last_name as lastName,gender,email*/
@@ -23,19 +47,57 @@
                     useGeneratedKeys="true" :使用自增主键获取主键值策略
                     keyProperty：指定对应的主键属性，也就是mybatis获取到主键值以后，将这个值封装给JavaBean的那个属性
     -->
+
+    <!--public Long insertEmployee(Employee employee);-->
     <insert id="insertEmployee" parameterType="com.cwh.mybatis.beans.Employee"
     useGeneratedKeys="true" keyProperty="id">
         insert into table_employee(last_name, gender, email)
                     values (#{lastName},#{gender},#{email})
     </insert>
 
+    <!--
+        Oracle不支持自增；Oracle使用序列来模拟自增；
+        每次插入的数据的主键都是从序列中拿到的值，如何获取到这个值
+    -->
+<!--    <insert id="insertEmployee" databaseId="oracle">
+      &lt;!&ndash;
+            keyProperty:查出的主键值封装给JavaBean的哪个属性
+            order："BEFORE";当前SQL在插入SQL之前运行
+                    “AFTER”;当前SQL在插入SQL之后运行
+           resultType：查出的数据的返回值类型
+           BEFORE 运行顺序：
+                    先运行selectKey查询id的sql；查出id值封装给JavaBean的id属性
+                    再运行插入的sql；就可以取得id属性对应的值
+           AFTER 运行顺序：
+                    先运行插入的sql（从序列中取出新值作为id）
+                    再运行selectKey查询id的sql
+      &ndash;&gt;
+        <selectKey keyProperty="id" order="BEFORE" resultType="Integer">
+            &lt;!&ndash;编写查询主键的sql语句&ndash;&gt;
+            &lt;!&ndash;BEFORE
+             selete EMPLOYEE_SEQ.nextval from dual
+            &ndash;&gt;
+            &lt;!&ndash;AFTER
+              selete EMPLOYEE_SEQ.currval from dual
+             &ndash;&gt;
+        </selectKey>
+&#45;&#45;        &lt;!&ndash;插入时的主键是从序列中拿到的&ndash;&gt;
+        &lt;!&ndash;BEFORE
+        insert into table_employee(employeeId,lastName,email) values (#{id},#{lastName},#{email})
+        &ndash;&gt;
+        &lt;!&ndash;AFTER
+     insert into table_employee(employeeId,lastName,email) values (employees_seq.nextval,#{lastName},#{email})
+     &ndash;&gt;
+    </insert>-->
 
+    <!--public Integer updateEmployee(Employee employee);-->
     <update id="updateEmployee">
         update table_employee set last_name=#{lastName}, gender=#{gender},email=#{email}
     </update>
 
 
 
+    <!--public boolean deleteEmployeeById(Integer id);-->
     <delete id="deleteEmployeeById">
         delete from table_employee where id=#{id}
     </delete>

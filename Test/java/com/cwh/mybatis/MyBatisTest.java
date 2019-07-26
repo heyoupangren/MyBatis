@@ -1,8 +1,12 @@
 package com.cwh.mybatis;
 
+import com.cwh.mybatis.beans.Department;
 import com.cwh.mybatis.beans.Employee;
+import com.cwh.mybatis.dao.DepartmentMapper;
 import com.cwh.mybatis.dao.EmployeeMapper;
 import com.cwh.mybatis.dao.EmployeeMapperAnnotation;
+import com.cwh.mybatis.dao.EmployeeMapperPlus;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -12,6 +16,9 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.URIParameter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *1.接口式编程
@@ -75,9 +82,30 @@ public class MyBatisTest {
             //3.获取接口的实现类对象
             //会为接口自动创建一个动态代理对象，代理对象去执行增删改查
             EmployeeMapper mapper = openSession.getMapper(EmployeeMapper.class);
-            Employee employee = mapper.getEmpById(1);
+           //返回一个对象
+            /*Employee employee = mapper.getEmpById(1);*/
+            //代理对象
            /* System.out.println(mapper.getClass());*/
-            System.out.println(employee);
+            //传递一个map对象
+            /* Map<String,Object> map =new HashMap<>();
+            map.put("id",1);
+            map.put("lastName","Tom");
+            map.put("tableName","table_employee");
+            Employee employee = mapper.getEmpByMap(map);*/
+            //返回一个list集合
+           /* List<Employee> list = mapper.getEmpByLastName("%e%");
+            for (Employee employee:list){
+                System.out.println(employee);
+            }*/
+
+           //返回一个一条记录的map
+           /* Map<String, Object> emp = mapper.getEmpByIdReturnMap(1);
+            System.out.println(emp);*/
+
+           //返回多条记录的map
+
+           /* Map<String, Employee> employeeMap = mapper.getEmpByLastNameReturnMap("%r%");
+            System.out.println(employeeMap);*/
         }finally {
             openSession.close();
         }
@@ -125,7 +153,7 @@ public class MyBatisTest {
             System.out.println(employee);*/
 
             //添加数据
-            Employee employee = new Employee(null, "Jerry", "0", "Jerry@163.com");
+            Employee employee = new Employee(null, "Herry", "1", "Jerry@163.com");
             Long insertEmployee = mapper.insertEmployee(employee);
             System.out.println(employee.getId());
 
@@ -139,6 +167,35 @@ public class MyBatisTest {
             System.out.println(deleteEmployeeById);*/
             //增删改后要手动提交
             openSession.commit();
+        }finally {
+            openSession.close();
+        }
+    }
+    @Test
+    public void test04() throws IOException {
+        SqlSessionFactory sessionFactory = getSqlSessionFactory();
+        SqlSession openSession = sessionFactory.openSession();
+        try {
+            EmployeeMapperPlus mapper = openSession.getMapper(EmployeeMapperPlus.class);
+            /*Employee employee = mapper.getEmpById(1);*/
+           /* Employee employee = mapper.getEmpAndDept(1);*/
+            Employee employee = mapper.getEmpByStepAndId(4);
+            System.out.println(employee);
+            System.out.println(employee.getDepartment());
+        }finally {
+            openSession.close();
+        }
+    }
+    @Test
+    public void test05() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession openSession = sqlSessionFactory.openSession();
+        try {
+            DepartmentMapper mapper = openSession.getMapper(DepartmentMapper.class);
+           /* Department department = mapper.getDeptAndEmp(1);*/
+            Department department = mapper.getDeptByIdStep(1);
+            System.out.println(department);
+            System.out.println(department.getEmployees());
         }finally {
             openSession.close();
         }
