@@ -1,16 +1,18 @@
 package com.cwh.mybatis.beans;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Cwh
  * CreateTime 2019/7/25 14:26
  */
-public class Department {
+public class Department implements Serializable {
     private Integer id;
     private String departmentName;
     private List<Employee> employees;
 
+    private static final long serialVersionUID=1L;
     public Integer getId() {
         return id;
     }

@@ -1,16 +1,21 @@
 package com.cwh.mybatis.beans;
 
+import java.io.Serializable;
+
 /**
  * @author Cwh
  * CreateTime 2019/7/24 11:54
  */
-public class Employee {
+public class Employee implements Serializable {
 
     private Integer id;
     private String lastName;
     private String gender;
     private String email;
     private Department department;
+
+    private static final long serialVersionUID=1L;
+
 
     public Integer getId() {
         return id;

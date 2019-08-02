@@ -151,14 +151,23 @@
     <!--MySql下批量保存：可以foreach遍历MySQL支持values(),(),()语法-->
     <insert id="AddEmps">
         insert into table_employee(
-        <include refid="insertColumn" ></include>
+        <include refid="insertColumn" >
+            <!--<property name="" value=""/>-->
+        </include>
         )
         values
         <foreach collection="emps" item="emp" separator=",">
             (#{emp.lastName},#{emp.gender},#{emp.email},#{emp.department.id})
         </foreach>
     </insert>
-
+    <!--
+        抽取可重用的sql片段。方便后面引用
+        1.sql抽取：经常将要查询的列名，或者插入用的列名抽取出来方便引用
+        2.include来引用已经抽取的sql
+        3.include还可以自定义一些property，sql标签内部就能使用自定义的属性
+                include-property：取值的正确方式${prop},
+                #{不能使用这种方式}
+    -->
     <sql id="insertColumn">
         last_name, gender, email, department_id
     </sql>
@@ -170,6 +179,11 @@
             values (#{emp.lastName},#{emp.gender},#{emp.email},#{emp.department.id})
         </foreach>
     </insert>-->
+
+
+
+
+
     <!--两个内置参数：
         不只是方法传递过来的参数可以被用来判断，取值。。。
         mybatis默认还有两个内置参数：

@@ -5,11 +5,34 @@
 <mapper namespace="com.cwh.mybatis.dao.EmployeeMapper">
 
     <!--
-    namespace:命名空间；指定为接口的全类名
-    id:唯一标识符；接口的方法名
-    resultType：返回值类型
-    #{id}:从传递的参数中取得id值
+        namespace:命名空间；指定为接口的全类名
+        id:唯一标识符；接口的方法名
+        resultType：返回值类型
+        #{id}:从传递的参数中取得id值
     -->
+
+    <!--<cache eviction="FIFO" flushInterval="60000" readOnly="false" size="1024"></cache>-->
+    <cache type="org.mybatis.caches.ehcache.EhcacheCache"></cache>
+    <!--
+        eviction：缓存的回收策略:
+            ·LRU – 最近最少使用：移除最长时间不被使用的对象。
+            ·FIFO – 先进先出：按对象进入缓存的顺序来移除它们。
+            ·SOFT – 软引用：基于垃圾回收器状态和软引用规则移除对象。
+            ·WEAK – 弱引用：更积极地基于垃圾收集器状态和弱引用规则移除对象。
+        flushInterval：缓存刷新间隔
+            缓存多长时间清空一次，默认不清空，设置一个毫秒值
+        readOnly：是否只读：
+            true：只读；myBatis认为所有从缓存中获取数据的操作都是只读操作，不会修改数据。
+                    myBatis为了加快获取速度，直接就会将数据在缓存中的引用交给用户。不安全，速度快
+            false：非只读；myBatis觉得获取的数据可能会被修改。
+                        myBatis会利用序列化&反序列化的技术克隆一份新的数据给你，安全，速度慢
+
+        size：缓存存放多少元素；
+        type=""：指定自定义缓存的全类名；
+                实现cache接口即可；
+    -->
+
+
 
     <!-- public Map<String,Employee> getEmpByLastNameReturnMap(String lastName);-->
 
@@ -34,7 +57,8 @@
     </select>
 
     <!--public Employee getEmpById(Integer id);-->
-    <select id="getEmpById" resultType="com.cwh.mybatis.beans.Employee" >
+    <select id="getEmpById" resultType="com.cwh.mybatis.beans.Employee"
+    useCache="true">
       select * from table_employee
       /*id,last_name as lastName,gender,email*/
           where id = #{id}
